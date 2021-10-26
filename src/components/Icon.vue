@@ -1,5 +1,5 @@
 <template lang="pug">
-svg.icon
+svg.icon(@click="handleClick")
   use(:xlink:href="`#${name}`")
 </template>
 
@@ -11,6 +11,11 @@ export default {
   },
   data() {
     return {}
+  },
+  methods: {
+    handleClick() {
+      this.$emit("click")
+    }
   }
 }
 </script>
