@@ -12,7 +12,7 @@
         .item-functions
           icon.icon.remove-icon(name="remove_outline")
           icon.icon(
-            :name="item.isDoing ? 'pause' : 'play'",
+            :name="item.isDoing ? 'pause_circle' : 'play_circle'",
             :class="{ 'now-item': index === 0 }"
           )
   .finished-mission
@@ -29,8 +29,8 @@ import "@/assets/svg/sort.svg"
 import "@/assets/svg/add.svg"
 import "@/assets/svg/remove_outline.svg"
 import "@/assets/svg/check.svg"
-import "@/assets/svg/play.svg"
-import "@/assets/svg/pause.svg"
+import "@/assets/svg/play_circle.svg"
+import "@/assets/svg/pause_circle.svg"
 import Icon from "@/components/Icon.vue"
 
 export default {
@@ -106,7 +106,7 @@ export default {
 <style lang="sass" scoped>
 @import "@/assets/sass/index.sass"
 .mission-wrapper
-  margin-left: 69px
+  // margin-left: 69px
   width: 430px
   border-radius: 20px
   overflow: hidden
