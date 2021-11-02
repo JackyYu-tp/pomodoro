@@ -4,22 +4,31 @@
     .header-wrapper
       p.title 待辦任務
       .function-wrapper
-        icon.icon(v-for="item in functionItems", :name="item", :key="item")
+        icon.icon(
+          v-for="item in functionItems",
+          :name="item",
+          :key="item",
+          @click="handleEmit(item)"
+        )
     ul.list
-      li.list-item(v-for="(item, index) in waitingItems", :key="item.id")
-        .status(:class="item.finished ? 'finished' : 'waiting'")
+      li.list-item(
+        v-for="(item, index) in waitingMissions",
+        :key="item.id",
+        @click="setNowMission(index)"
+      )
+        .status.waiting
         p.label {{ item.label }}
         .item-functions
           icon.icon.remove-icon(name="remove_outline")
           icon.icon(
-            :name="item.isDoing ? 'pause_circle' : 'play_circle'",
-            :class="{ 'now-item': index === 0 }"
+            :name="index === nowMission && isCounting ? 'pause_circle' : 'play_circle'",
+            :class="{ 'now-item': index === nowMission }"
           )
   .finished-mission
     .header-wrapper
       p.title 已完成任務
     ul.list
-      li.list-item(v-for="(item, index) in waitingItems", :key="item.id")
+      li.list-item(v-for="(item, index) in finishedMissions", :key="item.id")
         icon.icon(name="check")
         p.label {{ item.label }}
 </template>
@@ -38,44 +47,26 @@ export default {
   components: {
     Icon
   },
+  props: {
+    waitingMissions: Array,
+    finishedMissions: Array,
+    nowMission: Number,
+    isCounting: Boolean
+  },
   data() {
     return {
-      functionItems: ["sort", "add"],
-      nowMission: null,
-      missions: [
-        {
-          id: 1,
-          finished: false,
-          isDoing: false,
-          label: "行銷提案簡報完成"
-        },
-        {
-          id: 2,
-          finished: false,
-          isDoing: false,
-          label: "線上雜誌銷售管道蒐集"
-        },
-        {
-          id: 3,
-          finished: false,
-          isDoing: false,
-          label: "律師事務所課程行銷文案"
-        },
-        {
-          id: 4,
-          finished: false,
-          isDoing: false,
-          label: "音樂會今日文案圖片設計"
-        }
-      ]
+      functionItems: ["add"]
     }
   },
-  computed: {
-    waitingItems() {
-      return this.missions.filter((item) => !item.false)
+  computed: {},
+  methods: {
+    setNowMission(index) {
+      this.$emit("setNowMission", index)
+    },
+    handleEmit(name) {
+      this.$emit(name)
     }
-  },
-  methods: {}
+  }
 }
 </script>
 <style lang="sass">
@@ -127,6 +118,7 @@ export default {
         display: flex
         align-items: center
         border-bottom: 2px solid $grey-001
+        cursor: pointer
         transition: .3s
         &:hover
           background-color: $grey-005
