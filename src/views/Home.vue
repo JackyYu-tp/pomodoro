@@ -11,7 +11,7 @@
         :nowMission="nowMission",
         :isCounting="isCounting",
         @setNowMission="handleSetNowMission",
-        @add="handleModal(true)",
+        @add="handleAddModal(true)",
         @finish="handleSingleEventFinish"
       )
     .timer-panel(
@@ -31,19 +31,40 @@
               :style="{ strokeDasharray: `${circleLength} 1230.88` }"
             )
       .controll-panel
-        Icon.icon(name="close", @click="handleCancelEvent")
-        Icon.icon(v-if="!isCounting", name="play", @click="handleStartTimer")
+        Icon.icon(
+          name="close",
+          @click="handleCancelEvent",
+          :class="{ disabled: waitingMissions.length <= 0 }"
+        )
+        Icon.icon(
+          v-if="!isCounting",
+          name="play",
+          @click="handleStartTimer",
+          :class="{ disabled: waitingMissions.length <= 0 }"
+        )
         Icon.icon(v-else, name="pause", @click="handleStopTimer")
-        Icon.icon(name="double_arrow", @click="handleChangeToRest")
-  Modal(v-if="isShowModal")
-    .add-wrapper
+        Icon.icon(
+          name="double_arrow",
+          @click="handleChangeToRestModal(true)",
+          :class="{ disabled: waitingMissions.length <= 0 || totalTime === 300 }"
+        )
+  Modal(v-if="isShowAddModal")
+    .modal-wrapper.add-wrapper
       .title 新增任務
       .content
         .mission-name 任務名稱
         input.name-input(v-model="addMission", type="text")
         .btn-wrapper
-          .button.cancel(@click="handleCancelAddEvent") 取消
+          .button.cancel(@click="handleCancelAddEvent(false)") 取消
           .button.confirm(@click="handleAddEvent") 確認
+  Modal(v-if="isShowChangeToRestModal")
+    .modal-wrapper.rest-wrapper
+      .title 跳至休息時間
+      .content
+        .message 您確定要終止目前任務？
+        .btn-wrapper
+          .button.cancel(@click="handleChangeToRestModal(false)") 取消
+          .button.confirm(@click="handleChangeToRest") 確認
 </template>
 
 <script>
@@ -74,7 +95,8 @@ export default {
       nowMission: 0,
       waitingMissions: [],
       finishedMissions: [],
-      isShowModal: false,
+      isShowAddModal: false,
+      isShowChangeToRestModal: false,
       addMission: ""
     }
   },
@@ -142,6 +164,7 @@ export default {
       if (this.totalTime === 300) return
       this.handleStopTimer()
       this.handleSetRestTime()
+      this.handleChangeToRestModal(false)
     },
     handleCancelEvent() {
       this.handleStopTimer()
@@ -178,11 +201,11 @@ export default {
         this.remainTime = 1500
       }
     },
-    handleModal(status) {
-      this.isShowModal = status
+    handleAddModal(status) {
+      this.isShowAddModal = status
     },
     handleCancelAddEvent() {
-      this.handleModal(false)
+      this.handleAddModal(false)
       this.addMission = ""
     },
     handleAddEvent() {
@@ -223,10 +246,17 @@ export default {
       if (finishedMissions && finishedMissions.length > 0) {
         this.finishedMissions = finishedMissions
       }
+    },
+    handleChangeToRestModal(status) {
+      this.isShowChangeToRestModal = status
     }
   }
 }
 </script>
+<style lang="sass">
+.disabled
+  pointer-events: none
+</style>
 
 <style lang="sass" scoped>
 @import "@/assets/sass/index.sass"
@@ -323,7 +353,7 @@ export default {
             color: $purple-001
       .controll-panel
         background-color: $purple-002
-  .add-wrapper
+  .modal-wrapper
     width: 30vw
     border-radius: 20px
     overflow: hidden
@@ -338,20 +368,6 @@ export default {
       background-color: $cyan-001
     .content
       padding: 20px 30px
-    .mission-name
-      color: $grey-006
-      font-size: 1rem
-      letter-spacing: 1.6px
-    .name-input
-      width: 100%
-      margin-top: 6px
-      border: none
-      border-bottom: 2px solid $grey-001
-      font-size: 18px
-      color: $grey-003
-      transition: .3s
-      &:focus-visible
-        outline: none
     .btn-wrapper
       margin-top: 30px
       display: flex
@@ -370,4 +386,26 @@ export default {
           margin-right: 10px
         &.confirm
           background-color: $cyan-001
+  .add-wrapper
+    .mission-name
+      color: $grey-006
+      font-size: 1rem
+      letter-spacing: 1.6px
+    .name-input
+      width: 100%
+      margin-top: 6px
+      border: none
+      border-bottom: 2px solid $grey-001
+      font-size: 18px
+      color: $grey-003
+      transition: .3s
+      &:focus-visible
+        outline: none
+  .rest-wrapper
+    .content
+      .message
+        font-size: 18px
+        color: $grey-003
+        letter-spacing: 1.8px
+        line-height: 27px
 </style>
