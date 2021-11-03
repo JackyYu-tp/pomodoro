@@ -96,8 +96,10 @@ export default {
       )
     },
     biggestId() {
+      let allMissions = this.waitingMissions.concat(this.finishedMissions)
+      if (allMissions.length <= 0) return 0
       return Math.max(
-        ...this.waitingMissions.concat(this.finishedMissions).map((event) => {
+        ...allMissions.map((event) => {
           return event.id
         })
       )
@@ -242,6 +244,7 @@ export default {
   //     .icon
   //       width: 60%
   .content-wrapper
+    padding: 20px
     flex: 1
     display: flex
     gap: 10px
