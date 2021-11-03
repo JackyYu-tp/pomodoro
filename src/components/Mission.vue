@@ -19,7 +19,10 @@
         .status.waiting
         p.label {{ item.label }}
         .item-functions
-          icon.icon.remove-icon(name="remove_outline")
+          icon.icon.remove-icon(
+            name="remove_outline",
+            @click="handleEmit('finish', index)"
+          )
           icon.icon(
             :name="index === nowMission && isCounting ? 'pause_circle' : 'play_circle'",
             :class="{ 'now-item': index === nowMission }"
@@ -65,8 +68,8 @@ export default {
     setNowMission(index) {
       this.$emit("setNowMission", index)
     },
-    handleEmit(name) {
-      this.$emit(name)
+    handleEmit(name, payload) {
+      this.$emit(name, payload)
     }
   }
 }

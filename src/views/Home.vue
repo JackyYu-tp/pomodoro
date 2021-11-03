@@ -11,7 +11,8 @@
         :nowMission="nowMission",
         :isCounting="isCounting",
         @setNowMission="handleSetNowMission",
-        @add="handleModal(true)"
+        @add="handleModal(true)",
+        @finish="handleSingleEventFinish"
       )
     .timer-panel(
       :class="{ 'work-theme': totalTime === 1500, 'rest-theme': totalTime === 300 }"
@@ -41,7 +42,7 @@
         .mission-name 任務名稱
         input.name-input(v-model="addMission", type="text")
         .btn-wrapper
-          .button.cancel(@click="handleCancel") 取消
+          .button.cancel(@click="handleCancelAddEvent") 取消
           .button.confirm(@click="handleAddEvent") 確認
 </template>
 
@@ -131,7 +132,7 @@ export default {
         } else {
           this.handleStopTimer()
           if (this.totalTime === 300) {
-            this.handleEventFinish()
+            this.handleEventFinish(this.nowMission)
           }
           this.handleSetRestTime()
         }
@@ -144,9 +145,17 @@ export default {
     },
     handleCancelEvent() {
       this.handleStopTimer()
-      this.handleEventFinish()
+      this.handleEventFinish(this.nowMission)
       this.totalTime = 1500
       this.remainTime = 1500
+    },
+    handleSingleEventFinish(index) {
+      if (index === this.nowMission) {
+        this.handleStopTimer()
+        this.totalTime = 1500
+        this.remainTime = 1500
+      }
+      this.handleEventFinish(index)
     },
     handleStopTimer() {
       if (!this.timer) return
@@ -154,8 +163,8 @@ export default {
       clearInterval(this.timer)
       this.timer = null
     },
-    handleEventFinish() {
-      let item = this.waitingMissions.splice(this.nowMission, 1)
+    handleEventFinish(index) {
+      let item = this.waitingMissions.splice(index, 1)
       this.finishedMissions = [...this.finishedMissions, ...item]
       this.nowMission = 0
       this.handleSaveList()
@@ -172,7 +181,7 @@ export default {
     handleModal(status) {
       this.isShowModal = status
     },
-    handleCancel() {
+    handleCancelAddEvent() {
       this.handleModal(false)
       this.addMission = ""
     },
@@ -185,7 +194,7 @@ export default {
           label: this.addMission
         }
       ]
-      this.handleCancel()
+      this.handleCancelAddEvent()
       this.handleSaveList()
     },
     handleSaveList() {
