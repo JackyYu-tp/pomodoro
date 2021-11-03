@@ -24,6 +24,7 @@
             :name="index === nowMission && isCounting ? 'pause_circle' : 'play_circle'",
             :class="{ 'now-item': index === nowMission }"
           )
+      li(v-if="waitingMissions.length === 0") 無未完成事件哦
   .finished-mission
     .header-wrapper
       p.title 已完成任務
@@ -31,6 +32,7 @@
       li.list-item(v-for="(item, index) in finishedMissions", :key="item.id")
         icon.icon(name="check")
         p.label {{ item.label }}
+      li(v-if="finishedMissions.length === 0") 無已完成事件哦
 </template>
 
 <script>
