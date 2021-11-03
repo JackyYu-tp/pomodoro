@@ -33,8 +33,8 @@
       .controll-panel
         Icon.icon(
           name="close",
-          @click="handleCancelEvent",
-          :class="{ disabled: waitingMissions.length <= 0 }"
+          @click="handleCancelEventModal(true)",
+          :class="{ disabled: waitingMissions.length <= 0 || !isCounting }"
         )
         Icon.icon(
           v-if="!isCounting",
@@ -58,13 +58,21 @@
           .button.cancel(@click="handleCancelAddEvent(false)") 取消
           .button.confirm(@click="handleAddEvent") 確認
   Modal(v-if="isShowChangeToRestModal")
-    .modal-wrapper.rest-wrapper
+    .modal-wrapper.confirm-wrapper
       .title 跳至休息時間
       .content
         .message 您確定要終止目前任務？
         .btn-wrapper
           .button.cancel(@click="handleChangeToRestModal(false)") 取消
           .button.confirm(@click="handleChangeToRest") 確認
+  Modal(v-if="isShowCancelEventModal")
+    .modal-wrapper.confirm-wrapper
+      .title 終止任務
+      .content
+        .message 您確定要終止目前任務？
+        .btn-wrapper
+          .button.cancel(@click="handleCancelEventModal(false)") 取消
+          .button.confirm(@click="handleCancelEvent") 確認
 </template>
 
 <script>
@@ -97,6 +105,7 @@ export default {
       finishedMissions: [],
       isShowAddModal: false,
       isShowChangeToRestModal: false,
+      isShowCancelEventModal: false,
       addMission: ""
     }
   },
@@ -169,6 +178,7 @@ export default {
     handleCancelEvent() {
       this.handleStopTimer()
       this.handleEventFinish(this.nowMission)
+      this.handleCancelEventModal(false)
       this.totalTime = 1500
       this.remainTime = 1500
     },
@@ -249,6 +259,9 @@ export default {
     },
     handleChangeToRestModal(status) {
       this.isShowChangeToRestModal = status
+    },
+    handleCancelEventModal(status) {
+      this.isShowCancelEventModal = status
     }
   }
 }
@@ -401,7 +414,7 @@ export default {
       transition: .3s
       &:focus-visible
         outline: none
-  .rest-wrapper
+  .confirm-wrapper
     .content
       .message
         font-size: 18px
