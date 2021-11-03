@@ -67,7 +67,7 @@ export default {
       navItem: ["list", "music", "chart"],
       nowItem: "list",
       totalTime: 1500,
-      remainTime: 10,
+      remainTime: 1500,
       timer: null,
       isCounting: false,
       nowMission: 0,
@@ -121,6 +121,7 @@ export default {
       this.remainTime = 1500
     },
     handleStartTimer() {
+      if (this.waitingMissions.length <= 0) return
       this.isCounting = true
       this.timer = setInterval(() => {
         if (this.remainTime !== 0) {
@@ -146,6 +147,7 @@ export default {
       this.remainTime = 1500
     },
     handleStopTimer() {
+      if (!this.timer) return
       this.isCounting = false
       clearInterval(this.timer)
       this.timer = null
@@ -153,6 +155,7 @@ export default {
     handleEventFinish() {
       let item = this.waitingMissions.splice(this.nowMission, 1)
       this.finishedMissions = [...this.finishedMissions, ...item]
+      this.nowMission = 0
       this.handleSaveList()
     },
     handleSetRestTime() {
