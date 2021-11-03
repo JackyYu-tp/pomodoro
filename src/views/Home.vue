@@ -71,50 +71,8 @@ export default {
       timer: null,
       isCounting: false,
       nowMission: 0,
-      waitingMissions: [
-        {
-          id: 1,
-          isDoing: false,
-          label: "行銷提案簡報完成"
-        },
-        {
-          id: 2,
-          isDoing: false,
-          label: "線上雜誌銷售管道蒐集"
-        },
-        {
-          id: 3,
-          isDoing: false,
-          label: "律師事務所課程行銷文案"
-        },
-        {
-          id: 4,
-          isDoing: false,
-          label: "音樂會今日文案圖片設計"
-        }
-      ],
-      finishedMissions: [
-        {
-          id: 5,
-          isDoing: false,
-          label: "行銷提案簡報完成"
-        },
-        {
-          id: 6,
-          isDoing: false,
-          label: "線上雜誌銷售管道蒐集"
-        },
-        {
-          id: 7,
-          isDoing: false,
-          label: "律師事務所課程行銷文案"
-        },
-        {
-          id: 8,
-          isDoing: false,
-          label: "音樂會今日文案圖片設計"
-        }
-      ],
+      waitingMissions: [],
+      finishedMissions: [],
       isShowModal: false,
       addMission: ""
     }
@@ -144,6 +102,12 @@ export default {
         })
       )
     }
+  },
+  mounted() {
+    this.handleGetList()
+  },
+  beforeDestroy() {
+    this.handleSaveList()
   },
   methods: {
     // setNowItem(name) {
@@ -189,6 +153,7 @@ export default {
     handleEventFinish() {
       let item = this.waitingMissions.splice(this.nowMission, 1)
       this.finishedMissions = [...this.finishedMissions, ...item]
+      this.handleSaveList()
     },
     handleSetRestTime() {
       if (this.totalTime === 1500) {
@@ -216,6 +181,34 @@ export default {
         }
       ]
       this.handleCancel()
+      this.handleSaveList()
+    },
+    handleSaveList() {
+      localStorage.setItem(
+        "waitingMissions",
+        JSON.stringify(this.waitingMissions)
+      )
+      localStorage.setItem(
+        "finishedMissions",
+        JSON.stringify(this.finishedMissions)
+      )
+    },
+    handleGetList() {
+      let waitingMissions = localStorage.getItem("waitingMissions")
+      if (waitingMissions) {
+        waitingMissions = JSON.parse(waitingMissions)
+      }
+      if (waitingMissions && waitingMissions.length > 0) {
+        this.waitingMissions = waitingMissions
+      }
+
+      let finishedMissions = localStorage.getItem("finishedMissions")
+      if (finishedMissions) {
+        finishedMissions = JSON.parse(finishedMissions)
+      }
+      if (finishedMissions && finishedMissions.length > 0) {
+        this.finishedMissions = finishedMissions
+      }
     }
   }
 }
