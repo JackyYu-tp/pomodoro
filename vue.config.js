@@ -3,6 +3,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 module.exports = {
+  publicPath: process.env.NODE_ENV === "production" ? "/pomodoro" : "",
   chainWebpack: (config) => {
     // 先刪除預設的svg配置
     config.module.rules.delete("svg")
